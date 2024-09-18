@@ -51,7 +51,10 @@ jobs:
         name: build-artifacts
         path: ./output
     - name: Unzip Build Artifacts
-      run: unzip -o ./output -d ./output
+      run: |
+        ls
+        ls output
+        unzip -o ./output -d ./output/build-artifacts
 
     - name: Echo files in output folder
       run: ls -la ./output
