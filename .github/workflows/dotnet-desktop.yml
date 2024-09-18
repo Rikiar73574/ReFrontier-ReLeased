@@ -48,23 +48,19 @@ jobs:
         draft: false
         prerelease: false
 
+  upload-release-assets:
+    runs-on: ubuntu-latest
     - name: Upload Release Assets
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        Get-ChildItem -Path Refrontier/output | ForEach-Object {
-          if (-not $_.PSIsContainer) {
-            Write-Output "Uploading $($_.FullName)..."
-            $response = Invoke-RestMethod -Method Post `
-                      -Uri "${{ steps.create_release.outputs.upload_url }}?name=$($_.Name)" `
-                      -Headers @{ Authorization = "token $env:GITHUB_TOKEN" } `
-                      -ContentType "application/octet-stream" `
-                      -InFile $_.FullName
-
-            if ($response.StatusCode -eq 201) {
-              Write-Output "Upload successful!"
-            } else {
-              Write-Output "Upload failed. Status code: $($response.StatusCode)"
-            }
-          }
-        }
+        for file in Refrontier/output/*; do
+          if [ -f "$file" ]; then
+            echo "Uploading $file..."
+            curl -XPOST \
+              -H "Authorization: token $GITHUB_TOKEN" \
+              -H "Content-Type: $(file -b --mime-type $file)" \
+              --data-binary @"$file" \
+              "$(jq -r .upload_url < $GITHUB_EVENT_PATH | sed -e 's/{?name,label}/?name=/')$(basename $file)"
+          fi
+        done
