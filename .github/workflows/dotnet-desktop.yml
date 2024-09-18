@@ -1,42 +1,4 @@
-# This workflow uses actions that are not certified by GitHub.
-# They are provided by a third-party and are governed by
-# separate terms of service, privacy policy, and support
-# documentation.
-
-# This workflow will build, test, sign and package a WPF or Windows Forms desktop application
-# built on .NET Core.
-# To learn how to migrate your existing application to .NET Core,
-# refer to https://docs.microsoft.com/en-us/dotnet/desktop-wpf/migration/convert-project-from-net-framework
-#
-# To configure this workflow:
-#
-# 1. Configure environment variables
-# GitHub sets default environment variables for every workflow run.
-# Replace the variables relative to your project in the "env" section below.
-#
-# 2. Signing
-# Generate a signing certificate in the Windows Application
-# Packaging Project or add an existing signing certificate to the project.
-# Next, use PowerShell to encode the .pfx file using Base64 encoding
-# by running the following Powershell script to generate the output string:
-#
-# $pfx_cert = Get-Content '.\SigningCertificate.pfx' -Encoding Byte
-# [System.Convert]::ToBase64String($pfx_cert) | Out-File 'SigningCertificate_Encoded.txt'
-#
-# Open the output file, SigningCertificate_Encoded.txt, and copy the
-# string inside. Then, add the string to the repo as a GitHub secret
-# and name it "Base64_Encoded_Pfx."
-# For more information on how to configure your signing certificate for
-# this workflow, refer to https://github.com/microsoft/github-actions-for-desktop-apps#signing
-#
-# Finally, add the signing certificate password to the repo as a secret and name it "Pfx_Key".
-# See "Build the Windows Application Packaging project" below to see how the secret is used.
-#
-# For more information on GitHub Actions, refer to https://github.com/features/actions
-# For a complete CI/CD sample to get started with GitHub Action workflows for Desktop Applications,
-# refer to https://github.com/microsoft/github-actions-for-desktop-apps
-
-name: .NET Core Desktop
+name: .NET Framework Build
 
 on:
   push:
@@ -52,18 +14,26 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
 
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: 8.0.x
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v1.0.2
 
-    #dependency for Rerontier.csproj
+    - name: Setup NuGet
+      uses: NuGet/setup-nuget@v1
+
+    - name: Restore Dependencies for LibReFrontier
+      run: nuget restore ./LibReFrontier/LibReFrontier.csproj
+
     - name: Build LibReFrontier Project
-      run: dotnet build ./LibReFrontier/LibReFrontier.csproj -c Release
+      run: msbuild ./LibReFrontier/LibReFrontier.csproj /p:Configuration=Release
+
+    - name: Restore Dependencies for ReFrontier
+      run: nuget restore ./Refrontier/ReFrontier.csproj
 
     - name: Build ReFrontier Project
-      run: dotnet publish ./Refrontier/ReFrontier.csproj -c Release -r win-x64 --self-contained -o outputs
-  
+      run: msbuild ./Refrontier/ReFrontier.csproj /p:Configuration=Release
+
+    - name: Publish ReFrontier Project
+      run: msbuild ./Refrontier/ReFrontier.csproj /t:Publish /p:Configuration=Release /p:Platform="Any CPU" /p:OutputPath=output
 
     - name: Upload Artifact
       uses: actions/upload-artifact@v3
