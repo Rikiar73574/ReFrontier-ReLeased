@@ -57,11 +57,13 @@ jobs:
       with:
         dotnet-version: 8.0.x
 
-    - name: Restore Dependencies
-      run: dotnet restore ./ReFrontier.sln
+    #dependency for Rerontier.csproj
+    - name: Build LibReFrontier Project
+      run: dotnet build ./LibReFrontier/LibReFrontier.csproj -c Release
 
-    - name: Build Project
-      run: dotnet publish ./Refrontier/ReFrontier.csproj -c Release -r win-x64 --self-contained -o output
+    - name: Build ReFrontier Project
+      run: dotnet publish ./Refrontier/ReFrontier.csproj -c Release -r win-x64 --self-contained -o outputs
+  
 
     - name: Upload Artifact
       uses: actions/upload-artifact@v3
