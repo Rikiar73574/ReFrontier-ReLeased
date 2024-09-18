@@ -49,12 +49,12 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         name: build-artifacts
-        path: ./Refrontier/output
+        path: ./output
     - name: Unzip Build Artifacts
-      run: unzip -o ./Refrontier/output/build-artifacts.zip -d ./Refrontier/output
+      run: unzip -o ./Refrontier/output/build-artifacts -d ./output
 
     - name: Echo files in output folder
-      run: ls -la ./Refrontier/output
+      run: ls -la ./output
 
 
     - name: Create GitHub Release
@@ -73,8 +73,8 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         ls
-        ls ./ReFrontier/output
-        for file in ./Refrontier/output/*; do
+        ls ./output
+        for file in ./output/*; do
           if [ -f "$file" ]; then
             echo "Uploading $file..."
             curl -XPOST \
