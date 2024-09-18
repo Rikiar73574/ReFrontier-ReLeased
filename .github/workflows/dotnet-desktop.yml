@@ -52,14 +52,13 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        for file in Refrontier/output/*; do
-          if [ -f "$file" ]; then
-            echo "Uploading $file..."
-            curl -sSL \
-              -X POST \
-              -H "Authorization: token $GITHUB_TOKEN" \
-              -H "Content-Type: $(file -b --mime-type $file)" \
-              --data-binary @"$file" \
-              "${{ steps.create_release.outputs.upload_url }}?name=$(basename $file)"
-          fi
-        done
+        Get-ChildItem -Path Refrontier/output | ForEach-Object {
+          if (-not $_.PSIsContainer) {
+            Write-Output "Uploading $($_.FullName)..."
+            Invoke-RestMethod -Method Post `
+                              -Uri "${{ steps.create_release.outputs.upload_url }}?name=$($_.Name)" `
+                              -Headers @{ Authorization = "token $env:GITHUB_TOKEN" } `
+                              -ContentType "application/octet-stream" `
+                              -InFile $_.FullName
+          }
+        }
