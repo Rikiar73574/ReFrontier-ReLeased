@@ -58,7 +58,7 @@ jobs:
         dotnet-version: 8.0.x
 
     - name: Restore Dependencies
-      run: dotnet restore ./Refrontier/ReFrontier.csproj
+      run: dotnet restore
 
     - name: Build Project
       run: dotnet publish ./Refrontier/ReFrontier.csproj -c Release -r win-x64 --self-contained -o output
