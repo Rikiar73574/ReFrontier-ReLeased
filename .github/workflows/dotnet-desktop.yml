@@ -39,7 +39,7 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: build-artifacts
-        path: outputapp.publish/
+        path: /ReFrontier/outputapp.publish/
 
     - name: Create GitHub Release
       id: create_release
