@@ -53,6 +53,7 @@ jobs:
     - name: Unzip Build Artifacts
       run: |
         ls -la output
+        ls -la output/ReFrontier_1_0_0_0
         unzip -o output -d output/build-artifacts
 
     - name: Echo files in output folder
