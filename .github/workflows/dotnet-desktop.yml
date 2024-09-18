@@ -57,7 +57,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: v1.0.1
+        tag_name: v1.0.2
         release_name: ReFrontier Release
         draft: false
         prerelease: false
@@ -68,7 +68,7 @@ jobs:
       run: |
         ls
         ls ./ReFrontier/output
-        for file in Refrontier/output/*; do
+        for file in ./Refrontier/output/*; do
           if [ -f "$file" ]; then
             echo "Uploading $file..."
             curl -XPOST \
