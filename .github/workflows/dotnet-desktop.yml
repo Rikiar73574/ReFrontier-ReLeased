@@ -51,7 +51,7 @@ jobs:
         name: build-artifacts
         path: ./output
     - name: Unzip Build Artifacts
-      run: unzip -o ./Refrontier/output/build-artifacts -d ./output
+      run: unzip -o ./output -d ./output
 
     - name: Echo files in output folder
       run: ls -la ./output
