@@ -60,24 +60,20 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: v1.0.5
+        tag_name: v1.0.6
         release_name: ReFrontier Release
         draft: false
         prerelease: false
         
     - name: Upload Release Assets
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: |
-        for file in ./output/ReFrontier_1_0_0_0/*; do
-          if [ -f "$file" ]; then
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          for file in ./output/ReFrontier_1_0_0_0/*; do
             echo "Uploading $file..."
-            UPLOAD_URL=$(jq -r .upload_url < $GITHUB_EVENT_PATH | sed -e 's/{?name,label}/?name=/')$(basename $file)
-            echo "Upload URL: $UPLOAD_URL"
-            curl -XPOST \
+            curl -X POST \
               -H "Authorization: token $GITHUB_TOKEN" \
               -H "Content-Type: $(file -b --mime-type $file)" \
-              --data-binary @"$file" \
-              "$UPLOAD_URL"
-          fi
-        done
+              --data-binary @$file \
+              "${{ steps.create_release.outputs.upload_url }}?name=$(basename $file)"
+          done
