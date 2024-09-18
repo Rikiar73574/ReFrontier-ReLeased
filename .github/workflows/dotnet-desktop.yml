@@ -69,15 +69,15 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        ls
-        ls ./output
         for file in ./output/ReFrontier_1_0_0_0/*; do
           if [ -f "$file" ]; then
             echo "Uploading $file..."
+            UPLOAD_URL=$(jq -r .upload_url < $GITHUB_EVENT_PATH | sed -e 's/{?name,label}/?name=/')$(basename $file)
+            echo "Upload URL: $UPLOAD_URL"
             curl -XPOST \
               -H "Authorization: token $GITHUB_TOKEN" \
               -H "Content-Type: $(file -b --mime-type $file)" \
               --data-binary @"$file" \
-              "$(jq -r .upload_url < $GITHUB_EVENT_PATH | sed -e 's/{?name,label}/?name=/')$(basename $file)"
+              "$UPLOAD_URL"
           fi
         done
