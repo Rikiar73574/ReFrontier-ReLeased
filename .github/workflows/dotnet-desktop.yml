@@ -32,7 +32,7 @@ jobs:
     - name: Publish ReFrontier Project
       run: |
         msbuild ./Refrontier/ReFrontier.csproj /t:Restore
-        msbuild ./Refrontier/ReFrontier.csproj --self-contained true /t:Publish /p:Configuration=Release /p:Platform="AnyCPU" /p:RuntimeIdentifier=win-x64 /p:SelfContained=true /p:PublishSingleFile=true /p:PublishTrimmed=true /p:OutputPath=output
+        dotnet publish ./Refrontier/ReFrontier.csproj --self-contained true -r win-x64 /t:Publish /p:Configuration=Release /p:Platform="AnyCPU" /p:RuntimeIdentifier=win-x64 /p:SelfContained=true /p:PublishSingleFile=true /p:PublishTrimmed=true /p:OutputPath=output
 
     - name: Upload Build Artifacts
       uses: actions/upload-artifact@v3
