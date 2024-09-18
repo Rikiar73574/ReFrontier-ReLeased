@@ -55,10 +55,16 @@ jobs:
         Get-ChildItem -Path Refrontier/output | ForEach-Object {
           if (-not $_.PSIsContainer) {
             Write-Output "Uploading $($_.FullName)..."
-            Invoke-RestMethod -Method Post `
-                              -Uri "${{ steps.create_release.outputs.upload_url }}?name=$($_.Name)" `
-                              -Headers @{ Authorization = "token $env:GITHUB_TOKEN" } `
-                              -ContentType "application/octet-stream" `
-                              -InFile $_.FullName
+            $response = Invoke-RestMethod -Method Post `
+                      -Uri "${{ steps.create_release.outputs.upload_url }}?name=$($_.Name)" `
+                      -Headers @{ Authorization = "token $env:GITHUB_TOKEN" } `
+                      -ContentType "application/octet-stream" `
+                      -InFile $_.FullName
+
+            if ($response.StatusCode -eq 201) {
+              Write-Output "Upload successful!"
+            } else {
+              Write-Output "Upload failed. Status code: $($response.StatusCode)"
+            }
           }
         }
