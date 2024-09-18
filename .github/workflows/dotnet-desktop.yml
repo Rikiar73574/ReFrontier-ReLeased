@@ -9,8 +9,6 @@ on:
 jobs:
   build:
     runs-on: windows-latest
-  build-release-assets:
-    runs-on: ubuntu-latest
 
     steps:
     - name: Checkout
@@ -39,6 +37,19 @@ jobs:
         name: build-artifacts
         path: D:\a\ReFrontier-ReLeased\ReFrontier-ReLeased\Refrontier\outputapp.publish\Application Files\
 
+  release-assets:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Download Build Artifacts
+      uses: actions/download-artifact@v2
+      with:
+        name: build-artifacts
+
     - name: Create GitHub Release
       id: create_release
       uses: actions/create-release@v1
@@ -49,6 +60,7 @@ jobs:
         release_name: ReFrontier Release
         draft: false
         prerelease: false
+        
     - name: Upload Release Assets
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
