@@ -30,7 +30,7 @@ jobs:
       run: nuget restore ./Refrontier/ReFrontier.csproj -SolutionDirectory .
 
     - name: Build ReFrontier Project
-      run: msbuild ./Refrontier/ReFrontier.csproj /p:Configuration=Release /p:AllowUnsafeBlocks=true
+      run: msbuild ./Refrontier/ReFrontier.csproj /p:Configuration=Release /p:Platform="Any CPU" /p:AllowUnsafeBlocks=true
 
     - name: Publish ReFrontier Project
       run: msbuild ./Refrontier/ReFrontier.csproj /t:Publish /p:Configuration=Release /p:Platform="Any CPU" /p:OutputPath=output
