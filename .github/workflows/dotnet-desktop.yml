@@ -28,11 +28,8 @@ jobs:
 
     - name: Restore Dependencies for ReFrontier
       run: nuget restore ./Refrontier/ReFrontier.csproj -SolutionDirectory .
-    
     - name: Publish ReFrontier Project
-      run: |
-        msbuild ./Refrontier/ReFrontier.csproj /t:Restore
-        dotnet publish ./Refrontier/ReFrontier.csproj --self-contained true -r win-x64 /t:Publish /p:Configuration=Release /p:Platform="AnyCPU" /p:RuntimeIdentifier=win-x64 /p:SelfContained=true /p:PublishSingleFile=true /p:PublishTrimmed=true /p:OutputPath=output
+      run: msbuild ./Refrontier/ReFrontier.csproj /t:Publish /p:Configuration=Release /p:Platform="AnyCPU" /p:OutputPath=output
 
     - name: Upload Build Artifacts
       uses: actions/upload-artifact@v3
@@ -51,12 +48,18 @@ jobs:
         draft: false
         prerelease: false
 
-    - name: Upload Release Asset
-      uses: actions/upload-release-asset@v1
+    - name: Upload Release Assets
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: Refrontier\output\ReFrontier.exe
-        asset_name: ReFrontier.exe
-        asset_content_type: application/octet-stream
+      run: |
+        for file in Refrontier/output/*; do
+          if [ -f "$file" ]; then
+            echo "Uploading $file..."
+            curl -sSL \
+              -X POST \
+              -H "Authorization: token $GITHUB_TOKEN" \
+              -H "Content-Type: $(file -b --mime-type $file)" \
+              --data-binary @"$file" \
+              "${{ steps.create_release.outputs.upload_url }}?name=$(basename $file)"
+          fi
+        done
