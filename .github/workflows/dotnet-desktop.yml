@@ -67,7 +67,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         ls
-        ls /ReFrontier/output
+        ls ./ReFrontier/output
         for file in Refrontier/output/*; do
           if [ -f "$file" ]; then
             echo "Uploading $file..."
