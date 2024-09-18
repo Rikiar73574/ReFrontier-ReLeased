@@ -58,6 +58,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: D:\a\ReFrontier-ReLeased\ReFrontier-ReLeased\Refrontier\outputapp.publish\Application Files\ReFrontier.exe
+        asset_path: D:\a\ReFrontier-ReLeased\ReFrontier-ReLeased\Refrontier\outputapp.publish\Application Files\
         asset_name: ReFrontier.exe
         asset_content_type: application/octet-stream
