@@ -9,6 +9,8 @@ on:
 jobs:
   build:
     runs-on: windows-latest
+  build-release-assets:
+    runs-on: ubuntu-latest
 
     steps:
     - name: Checkout
@@ -47,9 +49,6 @@ jobs:
         release_name: ReFrontier Release
         draft: false
         prerelease: false
-
-  upload-release-assets:
-    runs-on: ubuntu-latest
     - name: Upload Release Assets
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
