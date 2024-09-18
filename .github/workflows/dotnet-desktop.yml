@@ -20,18 +20,14 @@ jobs:
     - name: Setup NuGet
       uses: NuGet/setup-nuget@v1
 
-    - name: Restore Dependencies for LibReFrontier
-      run: nuget restore ./LibReFrontier/LibReFrontier.csproj -SolutionDirectory .
+    #- name: Restore Dependencies for LibReFrontier
+    #  run: nuget restore ./LibReFrontier/LibReFrontier.csproj -SolutionDirectory .
 
-    - name: Build LibReFrontier Project
-      run: msbuild ./LibReFrontier/LibReFrontier.csproj /p:Configuration=Release
+    #- name: Build LibReFrontier Project
+    #  run: msbuild ./LibReFrontier/LibReFrontier.csproj /p:Configuration=Release
 
     - name: Restore Dependencies for ReFrontier
       run: nuget restore ./Refrontier/ReFrontier.csproj -SolutionDirectory .
-
-    - name: Build ReFrontier Project
-      run: msbuild ./Refrontier/ReFrontier.csproj /p:Configuration=Release /p:Platform="AnyCPU" /p:AllowUnsafeBlocks=true
-
     - name: Publish ReFrontier Project
       run: msbuild ./Refrontier/ReFrontier.csproj /t:Publish /p:Configuration=Release /p:Platform="AnyCPU" /p:OutputPath=output
 
