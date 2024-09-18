@@ -12,7 +12,7 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout
 
     - name: Setup MSBuild
       uses: microsoft/setup-msbuild@v1.0.2
@@ -32,7 +32,7 @@ jobs:
       run: msbuild ./Refrontier/ReFrontier.csproj /t:Publish /p:Configuration=Release /p:Platform="AnyCPU" /p:OutputPath=output
 
     - name: Upload Build Artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact
       with:
         name: build-artifacts
         path: D:\a\ReFrontier-ReLeased\ReFrontier-ReLeased\Refrontier\outputapp.publish\Application Files\
@@ -43,12 +43,12 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout
 
     - name: Download Build Artifacts
-      uses: actions/download-artifact@v2
+      uses: actions/download-artifact
       with:
-        name: build-artifacts
+      name: build-artifacts
 
     - name: Create GitHub Release
       id: create_release
