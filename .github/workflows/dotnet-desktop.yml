@@ -52,13 +52,7 @@ jobs:
         path: ./output
     - name: Unzip Build Artifacts
       run: |
-        ls -la output
-        ls -la output/ReFrontier_1_0_0_0
-        unzip -o output -d output/build-artifacts
-
-    - name: Echo files in output folder
-      run: ls -la ./output
-
+        ls output/ReFrontier_1_0_0_0
 
     - name: Create GitHub Release
       id: create_release
@@ -66,7 +60,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: v1.0.3
+        tag_name: v1.0.4
         release_name: ReFrontier Release
         draft: false
         prerelease: false
@@ -77,7 +71,7 @@ jobs:
       run: |
         ls
         ls ./output
-        for file in ./output/*; do
+        for file in ./output/ReFrontier_1_0_0_0/*; do
           if [ -f "$file" ]; then
             echo "Uploading $file..."
             curl -XPOST \
