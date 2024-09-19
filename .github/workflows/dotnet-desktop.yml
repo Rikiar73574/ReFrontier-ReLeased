@@ -42,41 +42,58 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout-release
+    - name: Checkout repository
       uses: actions/checkout@v2
 
-    - name: Download Build Artifacts
-      uses: actions/download-artifact@v4
-      with:
-        name: build-artifacts
-        path: ./output
-
-    - name: Unzip Build Artifacts
+    - name: Install hub
       run: |
-        ls output/ReFrontier_1_0_0_0
+        sudo apt-get update
+        sudo apt-get install hub
+
+    - name: Authenticate hub
+      run: |
+        echo -e "protocol=https\nhost=github.com\n\n" | hub host set github.com "${{ secrets.GITHUB_TOKEN }}"
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Create GitHub Release
       id: create_release
-      uses: actions/create-release@v1
+      run: |
+        hub release create -m "Release ${GITHUB_REF#refs/tags/}" "${GITHUB_REF#refs/tags/}"
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: v1.0.8
-        release_name: ReFrontier Release
-        draft: false
-        prerelease: false
-    
-    - name: Install GitHub CLI
-      run: sudo apt-get install gh
-
+      
     - name: Upload Release Assets
       run: |
         for file in output/ReFrontier_1_0_0_0/*; do
           echo "Uploading $file..."
-          gh release upload ${{ steps.create_release.outputs.upload_url }} "$file" --clobber
+          hub release edit -m "Release ${GITHUB_REF#refs/tags/}" -a "$file" "${GITHUB_REF#refs/tags/}"
         done
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+Explanation of the Steps:
+Install hub: This step installs the hub command-line tool.
+Authenticate hub: This step configures authentication for hub using the GITHUB_TOKEN.
+echo -e "protocol=https\nhost=github.com\n\n" | hub host set github.com "${{ secrets.GITHUB_TOKEN }}": This command sets up the hub authentication using the GITHUB_TOKEN.
+Create Release with hub:
+hub release create -m "Release ${GITHUB_REF#refs/tags/}" "${GITHUB_REF#refs/tags/}": This command creates a new release.
+Upload Release Assets with hub:
+hub release edit -m "Release ${GITHUB_REF#refs/tags/}" -a "$file" "${GITHUB_REF#refs/tags/}": This command edits the release to attach assets, looping through each file in the output/ReFrontier_1_0_0_0 directory and uploading it to the release.
+Environment Variables:
+GITHUB_TOKEN: Used for authentication with hub.
+This configuration ensures that the hub command uses the GITHUB_TOKEN for authentication, which is a secure and straightforward method for managing GitHub releases and assets in your GitHub Actions workflow.
+
+word count: 290, tokens used: 1965, model: gpt-4o
+
+
+
+
+
+
+
+
+
+Type your question here...
 
 
  
