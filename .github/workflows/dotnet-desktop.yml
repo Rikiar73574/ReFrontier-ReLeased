@@ -61,7 +61,7 @@ jobs:
       run: |
         for file in output/ReFrontier_1_0_0_0/*; do
           echo "Uploading $file..."
-          hub release edit -m "Release ${GITHUB_REF#refs/tags/}" -a "$file" "${GITHUB_REF#refs/tags/}"
+          hub release edit -m "Release ${GITHUB_REF#refs/tags/}" -a "$file" "v1.1.0"
         done
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
