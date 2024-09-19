@@ -65,5 +65,19 @@ jobs:
         release_name: ReFrontier Release
         draft: false
         prerelease: false
-        
+    
+    - name: Install GitHub CLI
+      run: sudo apt-get install gh
+
+    - name: Upload Release Assets
+  run: |
+    for file in output/ReFrontier_1_0_0_0/*; do
+      echo "Uploading $file..."
+      gh release upload ${{ steps.create_release.outputs.upload_url }} "$file" --clobber
+    done
+  env:
+    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+
+ 
     
