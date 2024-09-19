@@ -50,12 +50,6 @@ jobs:
         sudo apt-get update
         sudo apt-get install hub
 
-    - name: Authenticate hub
-      run: |
-        echo -e "protocol=https\nhost=github.com\n\n" | hub host set github.com "${{ secrets.GITHUB_TOKEN }}"
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
     - name: Create GitHub Release
       id: create_release
       run: |
