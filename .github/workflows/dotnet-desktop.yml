@@ -59,7 +59,7 @@ jobs:
     - name: Create GitHub Release
       id: create_release
       run: |
-        hub release create -m "Release v2.0.0" "v2.0.0"
+        hub release create -m "Release v2.0.1" "v2.0.1"
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
@@ -68,7 +68,7 @@ jobs:
         cd output/ReFrontier_1_0_0_0/
         for file in *; do
           echo "Uploading $file..."
-          hub release edit -m "Release v2.0.0" -a "$file" "v2.0.0"
+          hub release edit -m "Release v2.0.0" -a "$file" "2.0.0"
         done
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
