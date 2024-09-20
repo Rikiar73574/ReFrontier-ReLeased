@@ -56,22 +56,33 @@ jobs:
         sudo apt-get update
         sudo apt-get install hub
 
-    - name: Create GitHub Release
+    - name: Create or Update GitHub Release
       id: create_release
       run: |
-        hub release create -m "Release v2.0.1" "v2.0.1"
+        TAG_NAME="v2.0.0"
+        RELEASE_NAME="Release v2.0.0"
+        
+        # Check if the release already exists
+        if gh release view "$TAG_NAME" > /dev/null 2>&1; then
+          echo "Release $TAG_NAME already exists. Updating it."
+          gh release edit "$TAG_NAME" --title "$RELEASE_NAME" --notes "Updated release."
+        else
+          echo "Creating new release $TAG_NAME."
+          gh release create "$TAG_NAME" --title "$RELEASE_NAME" --notes "New release."
+        fi
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      
+
     - name: Upload Release Assets
       run: |
         cd output/ReFrontier_1_0_0_0/
         for file in *; do
           echo "Uploading $file..."
-          hub release edit -m "Release v2.0.0" -a "$file" "2.0.0"
+          gh release upload "$TAG_NAME" "$file"
         done
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      needs: create_release
 
 
 
