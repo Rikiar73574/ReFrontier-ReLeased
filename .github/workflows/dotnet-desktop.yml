@@ -94,32 +94,6 @@ jobs:
         asset_path: output/ReFrontier_1_0_0_0
         asset_name: ReFrontier_1_0_0_0
         asset_content_type: application/zip
-Explanation:
-Trigger: The workflow is triggered on a push to the main branch.
-Checkout repository: Uses the actions/checkout@v3 action to check out the repository.
-Setup Git: Configures Git user information for the github-actions[bot].
-Get latest tag: Retrieves the latest tag using git describe and outputs it.
-Bump version: Parses and increments the patch version of the latest tag to create a new tag. This example assumes semantic versioning (e.g., v1.0.0 to v1.0.1).
-Create and push new tag: Creates and pushes the new tag to the repository.
-Create GitHub Release: Uses the actions/create-release@v1 action to create a new GitHub release with the new tag.
-Upload release assets: Uses the actions/upload-release-asset@v1 action to upload assets from the output/ReFrontier_1_0_0_0 directory to the created release.
-Notes:
-Ensure that the output/ReFrontier_1_0_0_0 directory exists and contains the assets you want to upload.
-Adjust the version bump logic if you want to increment the major or minor version instead of the patch version.
-Ensure that the GITHUB_TOKEN secret is available in your repository settings (it's automatically provided by GitHub Actions).
-This workflow will automate the release process as described.
-
-word count: 453, tokens used: 1899, model: gpt-4o
-
-
-
-
-
-
-
-
-
-Type your question here...
 
 
 
