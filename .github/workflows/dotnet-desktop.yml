@@ -37,51 +37,90 @@ jobs:
         name: build-artifacts
         path: D:\a\ReFrontier-ReLeased\ReFrontier-ReLeased\Refrontier\outputapp.publish\Application Files\
 
-  release-assets:
-    needs: build
+  create-release:
     runs-on: ubuntu-latest
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
-    - name: Download Build Artifacts
-      uses: actions/download-artifact@v4
-      with:
-        name: build-artifacts
-        path: ./output
-
-    - name: Install hub
+    - name: Setup Git
       run: |
-        sudo apt-get update
-        sudo apt-get install hub
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
 
-    - name: Update GitHub Release
+    - name: Get latest tag
+      id: get_latest_tag
+      run: |
+        latest_tag=$(git describe --tags `git rev-list --tags --max-count=1`)
+        echo "Latest tag: $latest_tag"
+        echo "::set-output name=latest_tag::$latest_tag"
+
+    - name: Bump version (example to increment patch version)
+      id: bump_version
+      run: |
+        latest_tag=${{ steps.get_latest_tag.outputs.latest_tag }}
+        IFS='.' read -r -a version_parts <<< "${latest_tag//v/}"
+        major=${version_parts[0]}
+        minor=${version_parts[1]}
+        patch=$((version_parts[2] + 1))
+        new_tag="v${major}.${minor}.${patch}"
+        echo "New tag: $new_tag"
+        echo "::set-output name=new_tag::$new_tag"
+
+    - name: Create and push new tag
+      run: |
+        new_tag=${{ steps.bump_version.outputs.new_tag }}
+        git tag $new_tag
+        git push origin $new_tag
+
+    - name: Create GitHub Release
       id: create_release
-      run: |
-        TAG_NAME="v2.0.0"
-        RELEASE_NAME="Release v2.0.0"
-        if gh release view "$TAG_NAME";
-          then
-            echo "Release $TAG_NAME already exists. Updating it."
-            gh release edit "$TAG_NAME" --title "$RELEASE_NAME" --notes "Updated release."
-        else
-          echo "Creating new release $TAG_NAME."
-          gh release create "$TAG_NAME" --title "$RELEASE_NAME" --notes "New release."
-        fi
+      uses: actions/create-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ steps.bump_version.outputs.new_tag }}
+        release_name: ${{ steps.bump_version.outputs.new_tag }}
+        draft: false
+        prerelease: false
 
-    - name: Upload Release Assets
-      run: |
-        cd output/ReFrontier_1_0_0_0/
-        for file in *; do
-          echo "Uploading $file..."
-          gh release upload "$TAG_NAME" "$file"
-        done
+    - name: Upload release assets
+      uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      needs: create_release
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: output/ReFrontier_1_0_0_0
+        asset_name: ReFrontier_1_0_0_0
+        asset_content_type: application/zip
+Explanation:
+Trigger: The workflow is triggered on a push to the main branch.
+Checkout repository: Uses the actions/checkout@v3 action to check out the repository.
+Setup Git: Configures Git user information for the github-actions[bot].
+Get latest tag: Retrieves the latest tag using git describe and outputs it.
+Bump version: Parses and increments the patch version of the latest tag to create a new tag. This example assumes semantic versioning (e.g., v1.0.0 to v1.0.1).
+Create and push new tag: Creates and pushes the new tag to the repository.
+Create GitHub Release: Uses the actions/create-release@v1 action to create a new GitHub release with the new tag.
+Upload release assets: Uses the actions/upload-release-asset@v1 action to upload assets from the output/ReFrontier_1_0_0_0 directory to the created release.
+Notes:
+Ensure that the output/ReFrontier_1_0_0_0 directory exists and contains the assets you want to upload.
+Adjust the version bump logic if you want to increment the major or minor version instead of the patch version.
+Ensure that the GITHUB_TOKEN secret is available in your repository settings (it's automatically provided by GitHub Actions).
+This workflow will automate the release process as described.
+
+word count: 453, tokens used: 1899, model: gpt-4o
+
+
+
+
+
+
+
+
+
+Type your question here...
+
 
 
 
