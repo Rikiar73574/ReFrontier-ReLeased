@@ -52,9 +52,10 @@ jobs:
     - name: Get latest tag
       id: get_latest_tag
       run: |
-        latest_tag=$(git describe --tags `git rev-list --tags --max-count=1`)
+        latest_tag=$(git describe --tags `git rev-list --tags --max-count=1` 2>/dev/null || echo "v0.0.0")
         echo "Latest tag: $latest_tag"
         echo "::set-output name=latest_tag::$latest_tag"
+
 
     - name: Bump version (example to increment patch version)
       id: bump_version
