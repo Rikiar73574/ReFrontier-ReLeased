@@ -62,9 +62,9 @@ jobs:
         TAG_NAME="v2.0.0"
         RELEASE_NAME="Release v2.0.0"
         if gh release view "$TAG_NAME";
-        then
-          echo "Release $TAG_NAME already exists. Updating it."
-          gh release edit "$TAG_NAME" --title "$RELEASE_NAME" --notes "Updated release."
+          then
+            echo "Release $TAG_NAME already exists. Updating it."
+            gh release edit "$TAG_NAME" --title "$RELEASE_NAME" --notes "Updated release."
         else
           echo "Creating new release $TAG_NAME."
           gh release create "$TAG_NAME" --title "$RELEASE_NAME" --notes "New release."
