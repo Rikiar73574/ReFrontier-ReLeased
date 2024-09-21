@@ -77,7 +77,7 @@ jobs:
 
     - name: Create and push new tag
       run: |
-        ls -la output
+        ls -la output/build-artifacts
         new_tag=${{ steps.bump_version.outputs.new_tag }}
         git tag $new_tag
         git push origin $new_tag
