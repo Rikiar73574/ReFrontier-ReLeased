@@ -70,9 +70,9 @@ jobs:
       uses: dwenegar/upload-release-assets@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
+      with:
         release_id: ${{ steps.create_release.outputs.id }}
-          assets_path: output/build-artifacts/ReFrontier_1_0_0_0
+        assets_path: output/build-artifacts/ReFrontier_1_0_0_0
 
 
 
