@@ -49,7 +49,6 @@ jobs:
       uses: actions/download-artifact@v4
       with: 
         path: output/
-      run: ls -la output
 
     - name: Setup Git
       run: |
