@@ -55,53 +55,26 @@ jobs:
         git config user.name "github-actions[bot]"
         git config user.email "github-actions[bot]@users.noreply.github.com"
 
-    - name: Get latest tag
-      id: get_latest_tag
-      run: |
-        latest_tag=$(git describe --tags `git rev-list --tags --max-count=1` || echo "v0.0.0")
-        echo "Latest tag: $latest_tag"
-        echo "::set-output name=latest_tag::$latest_tag"
-
-
-    - name: Bump version (example to increment patch version)
-      id: bump_version
-      run: |
-        latest_tag=${{ steps.get_latest_tag.outputs.latest_tag }}
-        IFS='.' read -r -a version_parts <<< "${latest_tag//v/}"
-        major=${version_parts[0]}
-        minor=${version_parts[1]}
-        patch=$((version_parts[2] + 1))
-        new_tag="v${major}.${minor}.${patch}"
-        echo "New tag: $new_tag"
-        echo "::set-output name=new_tag::$new_tag"
-
-    - name: Create and push new tag
-      run: |
-        ls -la output/build-artifacts/ReFrontier_1_0_0_0
-        new_tag=${{ steps.bump_version.outputs.new_tag }}
-        git tag $new_tag
-        git push origin $new_tag
-
-    - name: Create GitHub Release
+    
+       output/build-artifacts/ReFrontier_1_0_0_0
+    - name: Create Release
       id: create_release
       uses: actions/create-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: ${{ steps.bump_version.outputs.new_tag }}
-        release_name: ${{ steps.bump_version.outputs.new_tag }}
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
         draft: false
         prerelease: false
-
-    - name: Upload release assets
-      uses: actions/upload-release-asset@v1
+    - name: Upload Release Assets
+      id: upload-release-assets
+      uses: dwenegar/upload-release-assets@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: output/build-artifacts/ReFrontier_1_0_0_0
-        asset_name: ReFrontier.exe
-        asset_content_type: application/zip
+        with:
+        release_id: ${{ steps.create_release.outputs.id }}
+          assets_path: output/build-artifacts/ReFrontier_1_0_0_0
 
 
 
