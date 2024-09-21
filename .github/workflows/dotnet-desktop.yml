@@ -55,8 +55,6 @@ jobs:
         git config user.name "github-actions[bot]"
         git config user.email "github-actions[bot]@users.noreply.github.com"
 
-    
-       output/build-artifacts/ReFrontier_1_0_0_0
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1
